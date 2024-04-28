@@ -17,7 +17,8 @@ In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
-import util
+
+from util import PriorityQueue, Queue, Stack
 
 
 class SearchProblem:
@@ -90,19 +91,95 @@ def depthFirstSearch(problem: SearchProblem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    state = problem.getStartState()
+    actions = []
+
+    # Check if start state is goal state then return empty list of actions
+    if problem.isGoalState(state):
+        return actions
+
+    explored = set()
+    # Use stack as queuing strategy to get states and actions from frontier
+    frontier = Stack()
+    frontier.push((state, actions))
+    while not frontier.isEmpty():
+        # Get last state and associated actions from queue
+        curr_state, curr_actions = frontier.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_actions
+
+        if curr_state not in explored:
+            # Add current state to explored set to avoid expanding again (graph search)
+            explored.add(curr_state)
+
+            # Expand current state and add successors to queue
+            for successor in problem.getSuccessors(curr_state):
+                frontier.push((successor[0], curr_actions + [successor[1]]))
+
+    # Return empty list of actions if no solution was found
+    return []
 
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    state = problem.getStartState()
+    actions = []
+
+    if problem.isGoalState(state):
+        return actions
+
+    explored = set()
+    frontier = Queue()  # only change to DFS
+    frontier.push((state, actions))
+    while not frontier.isEmpty():
+        curr_state, curr_actions = frontier.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_actions
+
+        if curr_state not in explored:
+            explored.add(curr_state)
+
+            for successor in problem.getSuccessors(curr_state):
+                frontier.push((successor[0], curr_actions + [successor[1]]))
+
+    return []
 
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    state = problem.getStartState()
+    actions = []
+
+    if problem.isGoalState(state):
+        return actions
+
+    explored = set()
+    frontier = PriorityQueue()
+    frontier.push((state, actions), 0)
+    while not frontier.isEmpty():
+        curr_state, curr_actions = frontier.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_actions
+
+        if curr_state not in explored:
+            explored.add(curr_state)
+
+            for successor, action, cost in problem.getSuccessors(curr_state):
+                successor_actions = curr_actions + [action]
+
+                # Check if successor already in frontier and if cost can be updated
+                # frontier.update does nothing if new cost is more expensive
+                frontier.update(
+                    (successor, successor_actions),
+                    problem.getCostOfActions(curr_actions) + cost,
+                )
+
+    return []
 
 
 def nullHeuristic(state, problem=None):

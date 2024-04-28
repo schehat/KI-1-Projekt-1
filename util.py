@@ -26,9 +26,10 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import sys
+import heapq
 import inspect
-import heapq, random
+import random
+import sys
 
 
 class FixedRandom:
@@ -607,6 +608,8 @@ def pause():
 #
 import signal
 import time
+
+
 class TimeoutFunctionException(Exception):
     """Exception to raise on a timeout"""
     pass
