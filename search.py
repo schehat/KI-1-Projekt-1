@@ -131,7 +131,7 @@ def breadthFirstSearch(problem: SearchProblem):
         return actions
 
     explored = set()
-    frontier = Queue()  # only change to DFS
+    frontier = Queue()  # only difference to DFS
     frontier.push((state, actions))
     while not frontier.isEmpty():
         curr_state, curr_actions = frontier.pop()
@@ -170,12 +170,10 @@ def uniformCostSearch(problem: SearchProblem):
             explored.add(curr_state)
 
             for successor, action, cost in problem.getSuccessors(curr_state):
-                successor_actions = curr_actions + [action]
-
                 # Check if successor already in frontier and if cost can be updated
                 # frontier.update does nothing if new cost is more expensive
                 frontier.update(
-                    (successor, successor_actions),
+                    (successor, curr_actions + [action]),
                     problem.getCostOfActions(curr_actions) + cost,
                 )
 
@@ -193,7 +191,35 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    state = problem.getStartState()
+    actions = []
+
+    if problem.isGoalState(state):
+        return actions
+
+    explored = set()
+    frontier = PriorityQueue()
+    frontier.push((state, actions), 0)
+    while not frontier.isEmpty():
+        curr_state, curr_actions = frontier.pop()
+
+        if problem.isGoalState(curr_state):
+            return curr_actions
+
+        if curr_state not in explored:
+            explored.add(curr_state)
+
+            for successor, action, cost in problem.getSuccessors(curr_state):
+                # Check if successor already in frontier and if cost can be updated
+                # frontier.update does nothing if new cost is more expensive
+                frontier.update(
+                    (successor, curr_actions + [action]),
+                    problem.getCostOfActions(curr_actions)
+                    + cost
+                    + heuristic(successor, problem),  # only difference to UCS
+                )
+
+    return []
 
 
 # Abbreviations
