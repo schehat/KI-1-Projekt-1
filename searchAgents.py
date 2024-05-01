@@ -614,7 +614,8 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # BFS most suitable in finding food with the least actions
+        return search.breadthFirstSearch(problem)
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -651,7 +652,10 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x, y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        # In this subproblem any food state is a goal state and self.food contains
+        # booleans if there is food or not
+        return self.food[x][y]
 
 
 def mazeDistance(
