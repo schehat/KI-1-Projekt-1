@@ -436,8 +436,6 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     "*** YOUR CODE HERE ***"
 
     # Edge case goal state
-    # This heuristic function will not be run if in goal state and heuristic would work
-    # without it, but autograder fails otherwise and claims it is inconsistent
     if problem.isGoalState(state):
         return 0
 
