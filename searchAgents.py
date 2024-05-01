@@ -343,9 +343,9 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        # Encodes pacman start position and booleans for the 4 corners,
+        # Encode pacman start position and booleans for the 4 corners,
         # which are not visited at the beginning
-        return tuple(self.startingPosition, tuple(4 * False))
+        return (self.startingPosition, (False, False, False, False))
 
     def isGoalState(self, state: Any):
         """
@@ -353,7 +353,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         # If one boolean for the corners is False then no goal state
-        return False in state[1]
+        return all(state[1])
 
     def getSuccessors(self, state: Any):
         """
@@ -375,14 +375,24 @@ class CornersProblem(search.SearchProblem):
         ]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x, y = currentPosition
+            x, y = state[0]
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
             if not hitsWall:
-                pass
+                corner_states_list = list(state[1])
+                # Check if successor is a corner state
+                if (nextx, nexty) in self.corners:
+                    # Get index of visited corner state
+                    corner_index = self.corners.index((nextx, nexty))
+                    # Update according corner state to be visited
+                    corner_states_list[corner_index] = True
+
+                # Create successor state and add it to the list of legal successors
+                successor_state = ((nextx, nexty), tuple(corner_states_list))
+                successors.append((successor_state, action, 1))
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
