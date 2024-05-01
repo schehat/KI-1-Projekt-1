@@ -425,12 +425,36 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     This function should always return a number that is a lower bound on the
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
+
+    Return the maximum manhattan distance from current state to all unvisited corners.
+    Is is an admissible heuristic because it would be the optimal path if no walls exist
+    when only 1 corner is unvisited.
     """
     corners = problem.corners  # These are the corner coordinates
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0  # Default to trivial solution
+
+    # Edge case goal state
+    # This heuristic function will not be run if in goal state and heuristic would work
+    # without it, but autograder fails otherwise and claims it is inconsistent
+    if problem.isGoalState(state):
+        return 0
+
+    visited_corners = state[1]
+    max_distance = float("-inf")
+
+    # Iterate trough corner tuple
+    for i in range(len(visited_corners)):
+        # If Corner visited then skip
+        if visited_corners[i]:
+            continue
+
+        current_distance = util.manhattanDistance(state[0], corners[i])
+        if current_distance > max_distance:
+            max_distance = current_distance
+
+    return max_distance
 
 
 class AStarCornersAgent(SearchAgent):
